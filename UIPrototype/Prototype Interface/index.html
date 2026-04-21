@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Juice Shop AI Security v2.0 - 仪表盘</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.3.4.3.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.1.0.7.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/echarts.min.5.4.3.js"></script>
+<style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .nav-item:hover { background: rgba(139, 92, 246, 0.2); }
+        .nav-active { background: rgba(139, 92, 246, 0.3); border-right: 4px solid #8b5cf6; }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- 侧边导航 -->
+<aside class="w-64 border-r border-slate-800 flex flex-col glass-card">
+<div class="p-6">
+<h1 class="text-xl font-bold flex items-center gap-2 text-violet-400">
+<iconify-icon icon="mdi:shield-bug-outline"></iconify-icon>
+                AI Security v2.0
+            </h1>
+<p class="text-xs text-slate-400 mt-1">2026-04-21 系统就绪</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="nav-item nav-active flex items-center gap-3 px-4 py-3 rounded-lg transition-all" href="index.html">
+<iconify-icon icon="mdi:view-dashboard"></iconify-icon> 态势感知首页
+            </a>
+<a class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-300" href="challenge.html">
+<iconify-icon icon="mdi:sword-cross"></iconify-icon> 注入挑战实验室
+            </a>
+<a class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-300" href="monitoring.html">
+<iconify-icon icon="mdi:magnify-scan"></iconify-icon> 漏洞监测评估
+            </a>
+<a class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-300" href="alerts.html">
+<iconify-icon icon="mdi:alert-octagon"></iconify-icon> 告警响应中心
+            </a>
+<a class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-300" href="settings.html">
+<iconify-icon icon="mdi:cog-outline"></iconify-icon> 系统配置管理
+            </a>
+</nav>
+<div class="p-4 border-t border-slate-800">
+<div class="flex items-center gap-3 p-2">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-04-21/b044db8e5d49446fb76974a1a58d0fb5.jpg"/>
+<div class="overflow-hidden">
+<p class="text-sm font-medium truncate">管理员 BOTS_055</p>
+<p class="text-xs text-green-400 flex items-center gap-1">
+<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 在线
+                    </p>
+</div>
+</div>
+</div>
+</aside>
+<!-- 主内容区 -->
+<main class="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+<!-- 顶部统计条 -->
+<header class="p-8 grid grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-2xl shadow-xl">
+<p class="text-slate-400 text-sm">总安全挑战数</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-bold">128</h3>
+<span class="text-blue-400 text-sm font-medium mb-1">+12% vs 昨</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-xl">
+<p class="text-slate-400 text-sm">已解开挑战数</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-bold text-violet-400">42</h3>
+<div class="w-24 bg-slate-700 h-2 rounded-full mb-2 overflow-hidden">
+<div class="bg-violet-500 h-full w-[33%]"></div>
+</div>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-xl border-l-4 border-green-500">
+<p class="text-slate-400 text-sm">防御成功率</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-bold text-green-400">99.4%</h3>
+<iconify-icon class="text-2xl text-green-500 mb-1" icon="mdi:shield-check"></iconify-icon>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-xl">
+<p class="text-slate-400 text-sm">系统监控状态</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-3xl font-bold text-emerald-400">稳定</h3>
+<span class="text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 mb-1">健康度 100</span>
+</div>
+</div>
+</header>
+<!-- 图表与内容区域 -->
+<section class="px-8 pb-8 grid grid-cols-12 gap-6">
+<!-- 趋势图 -->
+<div class="col-span-8 glass-card p-6 rounded-2xl min-h-[400px]">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-bold flex items-center gap-2">
+<iconify-icon class="text-violet-400" icon="mdi:trending-up"></iconify-icon>
+                        提示注入攻击频率趋势 (近24小时)
+                    </h4>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-slate-800 rounded text-xs hover:bg-slate-700 transition-colors">导出数据</button>
+</div>
+</div>
+<div class="w-full h-80" id="trendChart"></div>
+</div>
+<!-- 防护引擎状态 -->
+<div class="col-span-4 glass-card p-6 rounded-2xl">
+<h4 class="font-bold mb-6 flex items-center gap-2">
+<iconify-icon class="text-blue-400" icon="mdi:cpu-64-bit"></iconify-icon>
+                    防护引擎实时状态
+                </h4>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-slate-400">Prompt 检测负载</span>
+<span class="text-blue-400">42%</span>
+</div>
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full w-[42%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-slate-400">LlmMock 响应延迟</span>
+<span class="text-green-400">12ms</span>
+</div>
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-green-500 h-full w-[12%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-slate-400">内存占用 (ChallengeScore)</span>
+<span class="text-yellow-400">128MB</span>
+</div>
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-yellow-500 h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-slate-800">
+<div class="p-4 bg-slate-900/50 rounded-xl border border-violet-500/20">
+<p class="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">系统快照报告</p>
+<p class="text-sm text-slate-300 leading-relaxed">
+                            当前防御策略已更新至 v2.4。恶意注入拦截率较上周提升了 15.2%，未检测到严重的 Bypass 事件。
+                        </p>
+</div>
+</div>
+</div>
+<!-- 分布饼图 -->
+<div class="col-span-5 glass-card p-6 rounded-2xl">
+<h4 class="font-bold mb-6 flex items-center gap-2">
+<iconify-icon class="text-violet-400" icon="mdi:chart-pie"></iconify-icon>
+                    漏洞类型风险分布
+                </h4>
+<div class="w-full h-72" id="pieChart"></div>
+</div>
+<!-- 玩家排行榜 -->
+<div class="col-span-7 glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-bold flex items-center gap-2">
+<iconify-icon class="text-yellow-400" icon="mdi:trophy-outline"></iconify-icon>
+                        注入挑战全球排行榜 (Juice Shop CTF)
+                    </h4>
+<a class="text-xs text-violet-400 hover:underline" href="#">查看全部</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-xs text-slate-500 uppercase">
+<tr>
+<th class="pb-4 font-normal">排名</th>
+<th class="pb-4 font-normal">玩家</th>
+<th class="pb-4 font-normal">解开数</th>
+<th class="pb-4 font-normal">总积分</th>
+<th class="pb-4 font-normal">最后活跃</th>
+</tr>
+</thead>
+<tbody class="text-sm border-t border-slate-800">
+<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+<td class="py-4">
+<span class="w-6 h-6 rounded bg-yellow-500/20 text-yellow-500 flex items-center justify-center font-bold">1</span>
+</td>
+<td class="py-4 font-medium flex items-center gap-2">
+<img alt="avatar" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-04-21/09188bbfa17447199a402a32fe56d756.jpg"/>
+                                    Jim_Security
+                                </td>
+<td class="py-4">12</td>
+<td class="py-4 text-violet-400 font-bold">4,500</td>
+<td class="py-4 text-slate-500 text-xs">2 分钟前</td>
+</tr>
+<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+<td class="py-4">
+<span class="w-6 h-6 rounded bg-slate-300/20 text-slate-300 flex items-center justify-center font-bold">2</span>
+</td>
+<td class="py-4 font-medium flex items-center gap-2">
+<img alt="avatar" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-04-21/09188bbfa17447199a402a32fe56d756.jpg"/>
+                                    Alice_Hacker
+                                </td>
+<td class="py-4">11</td>
+<td class="py-4 text-violet-400 font-bold">4,280</td>
+<td class="py-4 text-slate-500 text-xs">15 分钟前</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors">
+<td class="py-4">
+<span class="w-6 h-6 rounded bg-orange-500/20 text-orange-500 flex items-center justify-center font-bold">3</span>
+</td>
+<td class="py-4 font-medium flex items-center gap-2">
+<img alt="avatar" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-04-21/09188bbfa17447199a402a32fe56d756.jpg"/>
+                                    ShadowWalker
+                                </td>
+<td class="py-4">9</td>
+<td class="py-4 text-violet-400 font-bold">3,900</td>
+<td class="py-4 text-slate-500 text-xs">1 小时前</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 趋势图
+            const trendChart = echarts.init(document.getElementById('trendChart'));
+            const trendOption = {
+                backgroundColor: 'transparent',
+                tooltip: { trigger: 'axis' },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '现在'],
+                    axisLine: { lineStyle: { color: '#475569' } }
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: { lineStyle: { color: '#1e293b' } },
+                    axisLine: { show: false }
+                },
+                series: [
+                    {
+                        name: '拦截请求',
+                        type: 'line',
+                        smooth: true,
+                        data: [120, 132, 101, 134, 90, 230, 210],
+                        itemStyle: { color: '#8b5cf6' },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(139, 92, 246, 0.5)' },
+                                { offset: 1, color: 'rgba(139, 92, 246, 0)' }
+                            ])
+                        }
+                    },
+                    {
+                        name: '可疑会话',
+                        type: 'line',
+                        smooth: true,
+                        data: [45, 52, 38, 67, 43, 89, 75],
+                        itemStyle: { color: '#3b82f6' }
+                    }
+                ]
+            };
+            trendChart.setOption(trendOption);
+
+            // 饼图
+            const pieChart = echarts.init(document.getElementById('pieChart'));
+            const pieOption = {
+                backgroundColor: 'transparent',
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '5%', textStyle: { color: '#94a3b8' } },
+                series: [
+                    {
+                        name: '攻击类型',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: { borderRadius: 10, borderColor: '#0f172a', borderWidth: 2 },
+                        label: { show: false },
+                        data: [
+                            { value: 1048, name: '直接指令注入', itemStyle: { color: '#8b5cf6' } },
+                            { value: 735, name: '越权信息泄露', itemStyle: { color: '#3b82f6' } },
+                            { value: 580, name: '提示词劫持', itemStyle: { color: '#f59e0b' } },
+                            { value: 484, name: '格式混淆攻击', itemStyle: { color: '#ef4444' } },
+                            { value: 300, name: '其他异常行为', itemStyle: { color: '#10b981' } }
+                        ]
+                    }
+                ]
+            };
+            pieChart.setOption(pieOption);
+
+            window.addEventListener('resize', () => {
+                trendChart.resize();
+                pieChart.resize();
+            });
+        });
+    </script>
+</body>
+</html>

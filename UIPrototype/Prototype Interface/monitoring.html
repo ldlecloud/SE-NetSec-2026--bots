@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>漏洞监测评估 - AI Security v2.0</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.3.4.3.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.1.0.7.js"></script>
+<style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .scan-pulse { animation: pulse-border 2s infinite; }
+        @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<nav class="h-16 flex items-center justify-between px-8 border-b border-slate-800 glass-card">
+<div class="flex items-center gap-4">
+<a class="text-violet-400 hover:text-violet-300 transition-colors" href="index.html"><iconify-icon class="text-2xl" icon="mdi:home"></iconify-icon></a>
+<h2 class="font-bold text-lg">漏洞监测与安全评估</h2>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400">最后更新: 2026-04-21 10:45:21</span>
+<div class="h-4 w-px bg-slate-800"></div>
+<button class="bg-violet-600/20 text-violet-400 border border-violet-500/50 px-4 py-1.5 rounded-lg text-sm hover:bg-violet-600 hover:text-white transition-all">下载总报表</button>
+</div>
+</nav>
+<main class="flex-1 p-8 space-y-8 overflow-y-auto">
+<!-- 扫描配置区 -->
+<section class="glass-card p-6 rounded-2xl grid grid-cols-12 gap-8 items-center border-t-2 border-violet-500">
+<div class="col-span-3 space-y-2">
+<label class="text-xs text-slate-500 uppercase font-bold">目标 API 端点</label>
+<input class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:border-violet-500 outline-none transition-all" type="text" value="http://localhost:3000/rest/chat/ai"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="text-xs text-slate-500 uppercase font-bold">攻击强度 (Strength)</label>
+<select class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:border-violet-500 outline-none">
+<option>快速扫描</option>
+<option selected="">标准渗透</option>
+<option>极限破坏</option>
+</select>
+</div>
+<div class="col-span-3 space-y-2">
+<label class="text-xs text-slate-500 uppercase font-bold">检测模型策略</label>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-slate-800 rounded text-[10px] border border-violet-500/30 text-violet-300">Semantic-V3</span>
+<span class="px-2 py-1 bg-slate-800 rounded text-[10px] border border-slate-700 text-slate-400">Regex-Audit</span>
+</div>
+</div>
+<div class="col-span-4 flex justify-end gap-3 pt-4">
+<button class="bg-violet-600 hover:bg-violet-500 px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition-all scan-pulse" id="startScan">
+<iconify-icon icon="mdi:play"></iconify-icon> 启动安全评估
+                </button>
+<button class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-all">
+<iconify-icon icon="mdi:pause"></iconify-icon> 暂停
+                </button>
+</div>
+</section>
+<!-- 进度与指标 -->
+<section class="grid grid-cols-3 gap-8">
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-slate-300">任务评估进度</h4>
+<span class="text-violet-400 font-bold" id="progressValue">68%</span>
+</div>
+<div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden mb-2">
+<div class="bg-gradient-to-right from-violet-600 to-blue-500 h-full w-[68%] transition-all duration-500" id="progressBar"></div>
+</div>
+<p class="text-[10px] text-slate-500">正在分析: 第 4,201/6,500 个测试向量...</p>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-center gap-6">
+<div class="w-12 h-12 bg-blue-500/20 text-blue-500 rounded-xl flex items-center justify-center text-2xl">
+<iconify-icon icon="mdi:database-search"></iconify-icon>
+</div>
+<div>
+<p class="text-xs text-slate-400">已扫描攻击载荷数</p>
+<h3 class="text-2xl font-bold tracking-tight">4,201 <span class="text-xs font-normal text-slate-500">/ 6,500</span></h3>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-center gap-6 border-r-4 border-red-500">
+<div class="w-12 h-12 bg-red-500/20 text-red-500 rounded-xl flex items-center justify-center text-2xl">
+<iconify-icon icon="mdi:skull-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-xs text-slate-400">发现漏洞数</p>
+<h3 class="text-2xl font-bold text-red-500 tracking-tight">14</h3>
+</div>
+</div>
+</section>
+<!-- 详细报告 -->
+<section class="glass-card rounded-2xl overflow-hidden">
+<div class="p-6 border-b border-slate-800 flex justify-between items-center">
+<h4 class="font-bold flex items-center gap-2">
+<iconify-icon class="text-violet-400" icon="mdi:file-document-outline"></iconify-icon>
+                    最近漏洞详细报告
+                </h4>
+<div class="flex gap-2">
+<span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded">高危: 3</span>
+<span class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded">中危: 8</span>
+<span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded">低危: 3</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-xs text-slate-500 uppercase bg-slate-900/50">
+<tr>
+<th class="px-6 py-4 font-normal">漏洞名称</th>
+<th class="px-6 py-4 font-normal">危害等级</th>
+<th class="px-6 py-4 font-normal">攻击入口</th>
+<th class="px-6 py-4 font-normal">修复建议</th>
+<th class="px-6 py-4 font-normal">操作</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-200 underline decoration-violet-500/50">间接指令注入 (Indirect Injection)</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] bg-red-500 text-white font-bold">CRITICAL</span>
+</td>
+<td class="px-6 py-4 text-xs text-slate-400">POST /api/chat/ai (field: message)</td>
+<td class="px-6 py-4 text-xs">实施严格的输入清洗，集成语义边界检测。</td>
+<td class="px-6 py-4">
+<button class="text-violet-400 hover:text-white transition-colors text-xs">查看详情</button>
+</td>
+</tr>
+<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-200">系统提示词泄露 (System Prompt Leak)</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] bg-orange-500 text-white font-bold">HIGH</span>
+</td>
+<td class="px-6 py-4 text-xs text-slate-400">GET /api/ai/config</td>
+<td class="px-6 py-4 text-xs">加密敏感 Prompt 片段，限制输出令牌最大长度。</td>
+<td class="px-6 py-4">
+<button class="text-violet-400 hover:text-white transition-colors text-xs">查看详情</button>
+</td>
+</tr>
+<tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-200">防御策略过载 (WAF Bypass)</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] bg-orange-500 text-white font-bold">HIGH</span>
+</td>
+<td class="px-6 py-4 text-xs text-slate-400">POST /api/chat/ai (payload encoding)</td>
+<td class="px-6 py-4 text-xs">启用递归解码扫描，识别 Base64/Hex 混淆 Payload。</td>
+<td class="px-6 py-4">
+<button class="text-violet-400 hover:text-white transition-colors text-xs">查看详情</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-slate-900/30 border-t border-slate-800">
+<div class="flex items-start gap-4">
+<div class="bg-violet-600/20 p-3 rounded-lg mt-1">
+<iconify-icon class="text-xl text-violet-400" icon="mdi:account-tie-hat"></iconify-icon>
+</div>
+<div>
+<h5 class="font-bold text-sm mb-1 text-violet-300">安全专家评估建议</h5>
+<p class="text-xs text-slate-400 leading-relaxed max-w-3xl">
+                            评估结果显示 AI 服务对复杂编码的 Payload 缺乏防御能力。建议优先部署语义网关，并为所有 LLM 交互实施 Least Privilege 原则，避免其接触核心数据库。
+                        </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // 模拟进度条
+        const startBtn = document.getElementById('startScan');
+        const bar = document.getElementById('progressBar');
+        const val = document.getElementById('progressValue');
+        
+        startBtn.addEventListener('click', () => {
+            let width = 68;
+            startBtn.innerText = '评估中...';
+            startBtn.classList.remove('scan-pulse');
+            
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    startBtn.innerText = '完成评估';
+                    startBtn.classList.add('bg-green-600');
+                } else {
+                    width++;
+                    bar.style.width = width + '%';
+                    val.innerText = width + '%';
+                }
+            }, 150);
+        });
+    </script>
+</body>
+</html>

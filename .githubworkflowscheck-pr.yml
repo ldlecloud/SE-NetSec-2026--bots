@@ -1,0 +1,17 @@
+# .github/workflows/check-pr.yml
+name: PR Quality Gate
+on: [pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 检查提交信息是否包含Issue ID
+        run: |
+          COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})
+          if ! echo "$COMMIT_MSG" | grep -qE "close #|fix #|ref #"; then
+            echo "❌ 提交信息需包含 close #123 或 ref #123"
+            exit 1
+          fi
+      - name: 运行测试
+        run: make test   # 或 npm test / mvn test

@@ -1,0 +1,21 @@
+<div class="register-box">
+  <h2>用户注册</h2>
+
+  <div class="input-item">
+    <input [(ngModel)]="username" placeholder="请输入用户名">
+  </div>
+  <div class="input-item">
+    <input [(ngModel)]="pwd" type="password" placeholder="请输入密码">
+  </div>
+  <div class="input-item">
+    <input [(ngModel)]="repwd" type="password" placeholder="请再次输入密码">
+    <div class="tip" [style.display]="pwdTipShow ? 'block' : 'none'">
+      两次密码不一致
+    </div>
+  </div>
+
+  <button (click)="register()">注册</button>
+  <div class="to-login">
+    已有账号？<a routerLink="/login">去登录</a>
+  </div>
+</div>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册 - AI实验室</title>
+    <style>
+        /* 全局重置与字体 */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #0d1527; /* 与 index.html 背景一致 */
+            color: #e0e0e0;
+        }
+
+        /* 注册卡片容器 */
+        .register-box { 
+            width: 400px; 
+            background: #161f33; /* 卡片背景色 */
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border: 1px solid #252f45; /* 边框颜色 */
+        }
+
+        .register-box h2 { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .input-item { margin-bottom: 20px; }
+
+        /* 输入框样式 */
+        input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            background: #1a2340; /* 输入框背景 */
+            border: 1px solid #252f45; /* 输入框边框 */
+            border-radius: 8px; 
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        input::placeholder { color: #4a5570; }
+        input:focus { border-color: #7c6fff; } /* 聚焦时的紫色高亮 */
+
+        /* 错误提示文字 */
+        .tip { 
+            color: #ff6b6b; /* 适配深色背景的柔和红色 */
+            font-size: 12px; 
+            margin-top: 8px; 
+            display: none; 
+            padding-left: 5px;
+        }
+
+        /* 注册按钮 */
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: linear-gradient(135deg, #7c6fff, #4a2fa0); /* 渐变色按钮 */
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 0 15px rgba(124,111,255,0.4); 
+        }
+
+        /* 底部链接 */
+        .to-login { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-size: 13px; 
+            color: #6b7a99;
+        }
+        .to-login a { 
+            color: #7c6fff; 
+            text-decoration: none; 
+            font-weight: 600;
+        }
+        .to-login a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="register-box">
+    <h2>用户注册</h2>
+
+    <div class="input-item">
+        <input id="username" placeholder="请输入用户名">
+    </div>
+    <div class="input-item">
+        <input id="pwd" type="password" placeholder="请输入密码">
+    </div>
+    <div class="input-item">
+        <input id="repwd" type="password" placeholder="请再次输入密码">
+        <div class="tip" id="pwdTip">两次密码不一致</div>
+    </div>
+
+    <button onclick="register()">注 册</button>
+    <div class="to-login">已有账号？<a href="/login.html">去登录</a></div>
+</div>
+
+<script>
+    async function register() {
+        let username = document.getElementById('username').value.trim();
+        let pwd = document.getElementById('pwd').value.trim();
+        let repwd = document.getElementById('repwd').value.trim();
+
+        // 简单校验非空
+        if (!username || !pwd || !repwd) {
+            alert('请填写完整信息');
+            return;
+        }
+
+        // 1. 先校验两次密码是否一致
+        if (pwd !== repwd) {
+            document.getElementById('pwdTip').style.display = 'block';
+            return;
+        }
+        document.getElementById('pwdTip').style.display = 'none';
+
+        // 2. 请求注册接口
+        try {
+            let res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password: pwd })
+            });
+
+            let data = await res.json();
+            if (data.ok) {
+                alert('注册成功！即将跳转到登录页面');
+                location.href = '/login.html';
+            } else {
+                alert(data.msg); // 显示后端返回的错误，如“用户名已存在”
+            }
+        } catch (e) {
+            alert('网络请求失败');
+        }
+    }
+</script>
+</body>
+</html>

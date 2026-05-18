@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录 - AI实验室</title>
+    <style>
+        /* 全局重置与字体 */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #0d1527; 
+            color: #e0e0e0;
+        }
+
+        /* 登录卡片容器 */
+        .login-box { 
+            width: 400px; 
+            background: #161f33; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border: 1px solid #252f45; 
+        }
+
+        .login-box h2 { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .input-item { margin-bottom: 20px; }
+
+        /* 输入框样式 */
+        input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            background: #1a2340; 
+            border: 1px solid #252f45; 
+            border-radius: 8px; 
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        input::placeholder { color: #4a5570; }
+        input:focus { border-color: #7c6fff; } 
+
+        /* 登录按钮 */
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: linear-gradient(135deg, #7c6fff, #4a2fa0); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 0 15px rgba(124,111,255,0.4); 
+        }
+
+        /* 底部链接 */
+        .to-register { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-size: 13px; 
+            color: #6b7a99;
+        }
+        .to-register a { 
+            color: #7c6fff; 
+            text-decoration: none; 
+            font-weight: 600;
+        }
+        .to-register a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>用户登录</h2>
+
+    <div class="input-item">
+        <input id="username" placeholder="用户名">
+    </div>
+    <div class="input-item">
+        <input id="password" type="password" placeholder="密码">
+    </div>
+
+    <!-- 验证码部分已移除 -->
+
+    <button onclick="login()">登 录</button>
+    <div class="to-register">没有账号？<a href="/register.html">立即注册</a></div>
+</div>
+
+<script>
+    // 登录逻辑
+    async function login() {
+        let username = document.getElementById('username').value.trim();
+        let password = document.getElementById('password').value.trim();
+
+        if (!username || !password) {
+            alert('请输入用户名和密码');
+            return;
+        }
+
+        // 请求登录接口
+        try {
+            let res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            let data = await res.json();
+            if (data.ok) {
+                // 登录成功，保存用户信息并跳转
+                localStorage.setItem('user', JSON.stringify({ username: username, userId: data.userId })); 
+                location.href = '/index.html';
+            } else {
+                alert(data.msg || '登录失败');
+            }
+        } catch (e) {
+            alert('网络请求失败');
+        }
+    }
+</script>
+</body>
+</html>

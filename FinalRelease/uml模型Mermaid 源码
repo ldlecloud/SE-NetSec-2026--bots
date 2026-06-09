@@ -1,0 +1,172 @@
+请求时序图
+sequenceDiagram
+    autonumber
+    participant User as 用户
+    participant Frontend as 前端
+    participant Controller as AiChallengeController
+    participant Detector as PromptInjectionDetector
+    participant LLM as LlmMockService
+    participant ScoreSvc as ChallengeScoreService
+    participant Progress as UserProgressRecord
+
+    Note over User, Frontend: 1. 用户发起请求
+    User->>Frontend: 输入攻击Payload并发送
+    Frontend->>Controller: POST /api/api/chat {userId, prompt}
+    
+    Note over Controller, Detector: 2. 安全检测阶段
+    Controller->>Detector: detect(prompt)
+    Detector-->>Controller: 返回检测结果(是否注入/类型/风险)
+    
+    Note over Controller, LLM: 3. 大模型响应阶段
+    Controller->>LLM: generateResponse(prompt, injection)
+    LLM-->>Controller: 返回LLM响应(含flag或正常回复)
+    
+    Note over Controller, ScoreSvc: 4. 积分与进度结算阶段
+    Controller->>ScoreSvc: awardScore(userId)
+    ScoreSvc->>Progress: 更新挑战状态为已完成
+    Progress-->>ScoreSvc: 返回积分发放结果
+    ScoreSvc-->>Controller: 返回(isSuccess, score, flag)
+    
+    Note over Controller, User: 5. 最终响应阶段
+    Controller-->>Frontend: 返回(response, isSuccess, score, flag)
+    Frontend-->>User: 显示AI响应、积分反馈与挑战完成提示
+核心类图
+classDiagram
+    %% 类定义
+    class AiChallengeController {
+        - llmService: LlmMockService
+        - detector: PromptInjectionDetector
+        + handleChatRequest(req, res): void
+        + getChallengeStatus(userId: String): Object
+        + awardScore(userId: String): Boolean
+    }
+
+    class PromptInjectionDetector {
+        - patterns: RegExp[]
+        - payloads: String[]
+        + detect(input: String): Boolean
+        + getRiskLevel(): int
+        + getInjectionType(): String
+    }
+
+    class LlmMockService {
+        - isVulnerable: Boolean
+        - systemPrompt: String
+        - secretFlag: String
+        + generateResponse(prompt: String): String
+        + leakSensitiveData(): String
+    }
+
+    class ChallengeScoreService {
+        - challengeId: String
+        - baseScore: int
+        + addScore(userId: String): Boolean
+        + isCompleted(userId: String): Boolean
+    }
+
+    class VulnerableCodeService {
+        - vulnCode: String
+        - fixedCode: String
+        - highlightLines: int[]
+        + getVulnerableCode(): String
+        + getFixedCode(): String
+        + getCodeDiff(): Object
+    }
+
+    class UserProgressRecord {
+        - userId: String
+        - challengeId: String
+        - isCompleted: Boolean
+        - completedAt: Date
+    }
+
+    %% 关系定义
+    %% Controller 依赖 Detector 和 LLM 服务
+    AiChallengeController --> PromptInjectionDetector : 使用检测器
+    AiChallengeController --> LlmMockService : 调用LLM
+    
+    %% Controller 调用积分和进度服务
+    AiChallengeController --> ChallengeScoreService : 结算积分
+    AiChallengeController --> UserProgressRecord : 查询进度
+    
+    %% 其他潜在关系
+    AiChallengeController --> VulnerableCodeService : 获取代码
+    
+    %% 样式调整
+    classDef controller fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef service fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef entity fill:#dfd,stroke:#333,stroke-width:2px;
+    classDef detector fill:#fdd,stroke:#333,stroke-width:2px;
+
+    class AiChallengeController controller
+    class PromptInjectionDetector detector
+    class LlmMockService service
+    class ChallengeScoreService service
+    class VulnerableCodeService service
+    class UserProgressRecord entity
+E-R图
+erDiagram
+    %% 实体定义
+    Users {
+        int id PK "主键"
+        string email "邮箱"
+        string password "密码"
+    }
+
+    Challenges {
+        int id PK "主键"
+        string name "题目名称"
+        string description "描述"
+        int score "分数"
+    }
+
+    VulnerableCode {
+        int id PK "主键"
+        int challenge_id FK "外键: 关联题目"
+        text vuln_code "漏洞代码"
+        text fixed_code "修复代码"
+        string highlight_lines "高亮行号"
+    }
+
+    AIChallengeProgress {
+        int id PK "主键"
+        int user_id FK "外键: 关联用户"
+        int challenge_id FK "外键: 关联题目"
+        boolean is_completed "是否完成"
+        datetime completed_at "完成时间"
+    }
+
+    PromptInjectionPayload {
+        int id PK "主键"
+        string payload "注入载荷内容"
+        string type "类型"
+        string risk_level "风险等级"
+        string description "描述"
+    }
+
+    %% 关系定义
+    Users ||--o{ AIChallengeProgress : "拥有 (1:N)"
+    Challenges ||--o{ AIChallengeProgress : "被记录 (1:N)"
+    Challenges ||--o{ VulnerableCode : "包含 (1:N)"
+    
+请求流程图
+graph TD
+    User[用户浏览器] --> Nginx[Nginx反向代理]
+    Nginx --> Frontend[Juice Shop前端 Angular]
+    Frontend --> Backend[Juice Shop后端 Express]
+    
+    Backend --> PluginBox
+    
+    subgraph PluginBox [AI提示注入插件模块]
+        direction TB
+        PluginFE[前端组件 集成到Juice Shop UI]
+        PluginBE[后端API 挂载到Juice Shop路由]
+    end
+    
+    PluginBox --> DB[MySQL数据库 复用]
+    DB --> Cache[Redis缓存 复用]
+    
+    style PluginBox fill:#f9f,stroke:#333,stroke-width:2px
+    style PluginFE fill:#fff,stroke:#333
+    style PluginBE fill:#fff,stroke:#333
+
